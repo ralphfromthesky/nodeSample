@@ -1,0 +1,15 @@
+====node js=====
+1. npm init -y 
+2. npm i express
+3. npm i -d nodemon
+4. set up the package.json and add this to the "scripts",
+    "start-na": "nodemon ./src/index.mjs",
+    "restart": "node ./src/index.mjs"
+5. add this   "type": "module" to outside of "scripts" or in main level,
+6. change   "main": "index.js" to    "main": "index.mjs", because we use module
+
+--npm run start-na
+
+===guides=====
+
+
