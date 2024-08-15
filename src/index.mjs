@@ -1,7 +1,12 @@
 import express, { raw, response } from "express";
 import { query, validationResult, body } from "express-validator";
+import cookieParser, { signedCookie } from "cookie-parser";
 
 const app = express();
+//for parsing cookie or converting string to an object
+// app.use(cookieParser()) 
+//you can also pass secret to cookieParser for authentication
+app.use(cookieParser("helloworld")) 
 
 //need this one declare first before using app.get/post/put/delete/patch need on top ordering is matter
 app.use(express.json()); // this one is for parsing data middleware
@@ -13,12 +18,37 @@ const loggingMiddleware = (request, response, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-//http://localhost:3000
+//http://localhost:3000 for example using cookie, this route must visit first so we can store cookie for authentication, like opening other routes, this routes must visit first
 app.get("/", (request, response) => {
   // response.send('hellow world!')
   // response.send({msg: 'hello'})
+  //setting up time for cookie if this one expires, the authentication also expire so you cannot visit other roustes,because it expires 
+  //you can also signed a cookie and you need to tracke which cookis is signed or not
+  response.cookie('hello', 'world', {maxAge: 10000, signed: true}) 
   response.status(201).send({ msg: "ralph" });
 });
+
+const sampletObject = ([
+  {name: 'ralp', age: 40, location: 'navotas'},
+  {name: 'shenron', age: 10, location: 'malabon'},
+  {name: 'gadwin', age: 5, location: 'makati'},
+
+])
+// using cookie for sample authentication, 
+app.get('/api/sampleRoute/employee', (request, response) => {
+  // console.log(request.cookies)
+  console.log(request.headers.cookie)
+ console.log(request.cookies)
+console.log(request.signedCookies.hello)
+//cookies and signedCookie are different yo need to track which is signed or not
+ if(request.signedCookies.hello && request.signedCookies.hello === 'world' ) {
+  response.status(200).send(sampletObject)
+} else {
+  return response.status(403).send('you need the correct cookie')
+}
+
+})
+
 
 //localhost:3000/api/users
 // using middleware here, like chaining using next() then it will execute next middleware
@@ -30,13 +60,19 @@ app.get(
 
     next();
   },
-  (request, response) => {
+  (request, response, next) => {
     response.status(201).send([
       { id: 1, name: "ralph", location: "navotas" },
       { id: 2, name: "shenrron", location: "malabon" },
       { id: 3, name: "gadwin", location: "makati" },
     ]);
+ next()
+  },
+  () => {
+   console.log('ralph next() using') 
+   console.log(`using next() this this one consoliing the object ${sampletObject}`)
   }
+
 );
 
 //using .status
