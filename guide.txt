@@ -16,3 +16,4 @@
 --npm i cookie-parser // for cookies converting
 --install npm i express-session, for authentication who is the sending a request in the server
 
+-- npm i passport passport-local // this one for using passport js, for realtime authentication for saving user sessions

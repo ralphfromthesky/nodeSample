@@ -245,6 +245,8 @@ app.delete("/api/products/:id", (request, response) => {
   products.splice(findProductId, 1);
   return response.sendStatus(200);
 });
+
+
 //+++++++++++++++++++++++++++++++++++++++++++++++ session part 2
 // thi one i session logging in
 const objectNames = [
